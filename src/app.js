@@ -145,7 +145,7 @@ var domoticz = {
 var UI = require('ui');
 
 Settings.config(
-  { url: 'https://cloud.nayg.ru/domoticz.html' },
+  { url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticz.html' },
 	function(e) {console.log('opening configurable');},
 	function(e) {console.log('closed configurable');if (e.failed) {console.log(e.response);}}
   );
