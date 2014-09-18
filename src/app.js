@@ -1,12 +1,6 @@
-/**
- *
- *
- * http://pebble.github.io/pebblejs/#settings
- *
- */
-
 var Settings = require('settings');
 var ajax = require('ajax');
+var UI = require('ui');
 
 
 var Base64 = {
@@ -115,8 +109,8 @@ var Base64 = {
 };
 
 var domoticz = {
-	_data : {},
-	_request : function (path) {
+  _data : {},
+  _request : function (path) {
 
                   ajax(
                   {
@@ -128,150 +122,127 @@ var domoticz = {
                       },
                   },
                       function(data) {
-                          domoticz._data = data;
-//                          console.log('Domoticz status inside object: ' + domoticz._data.status);
+                        domoticz._data = data;
+                        console.log(JSON.stringify(data));
+                        
+
                       },
                       function(error) {
                           console.log('The ajax request failed: ' + error);
+                          console.log(Settings.option('url'));
                       }
                   );
                   return domoticz._data;
                   },
-	devices : function () {
-		return this._request('/json.htm?type=devices&used=true&order=Name');
-	},
-	scenes : function () {
-		return this._request('/json.htm?type=scenes');
-	},
-	switches : function () {
-		return this._request('/json.htm?type=devices&used=true&order=Name&filter=light');
-	},
-	utilities : function () {
-		return this._request('/json.htm?type=devices&used=true&order=Name&filter=utility');
-	},
-	temperature : function () {
-		return this._request('/json.htm?type=devices&used=true&order=Name&filter=temp');
-	},
-	weather : function () {
-		return this._request('/json.htm?type=devices&used=true&order=Name&filter=weather');
-	},
-	on : function (idx) {
-		return this._request('/json.htm?type=command&param=switchlight&idx=&switchcmd=On&level=0');
-	},
-	off : function (idx) {
-		return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Off&level=0');
-	},
-	setlevel : function (idx,level) {
-		return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Set%20Level&level=' + level);
-	},
-	sceneOn : function (idx) {
-		return this._request('/json.htm?type=command&param=switchscene&idx=&switchcmd=On');
-	},
-	sceneOff : function (idx) {
-		return this._request('/json.htm?type=command&param=switchscene&idx=&switchcmd=Off');
-	},
-	device : function (idx) {
-		return this._request('/json.htm?type=devices&rid=idx');
-	},
+  getDevices : function () {
+    return this._request('/json.htm?type=devices&used=true&order=Name');
+    },
+  getScenes : function () {
+    return this._request('/json.htm?type=scenes');
+    },
+  getSwitches : function () {
+    return this._request('/json.htm?type=devices&used=true&order=Name&filter=light');
+    },
+  getUtilities : function () {
+    return this._request('/json.htm?type=devices&used=true&order=Name&filter=utility');
+    },
+  getTemperature : function () {
+    return this._request('/json.htm?type=devices&used=true&order=Name&filter=temp');
+    },
+  getWeather : function () {
+    return this._request('/json.htm?type=devices&used=true&order=Name&filter=weather');
+  },
+  getDevice : function (idx) {
+    return this._request('/json.htm?type=devices&rid=' + idx);
+  },
+  On : function (idx) {
+    return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=On&level=0');
+  },
+  Off : function (idx) {
+    return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Off&level=0');
+  },
+  setLevel : function (idx,level) {
+    return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Set%20Level&level=' + level);
+  },
+  sceneOn : function (idx) {
+    return this._request('/json.htm?type=command&param=switchscene&idx='+ idx +'&switchcmd=On');
+  },
+  sceneOff : function (idx) {
+    return this._request('/json.htm?type=command&param=switchscene&idx='+ idx +'&switchcmd=Off');
+  },
+  toggleDevice : function (idx){
+    var device = this.getDevice(idx);
+    if(device.result[0].Status == "On"){this.Off(idx);}
+    else if(device.result[0].Status == "Off"){this.On(idx);}
+    device = this.getDevice(idx);
+    return device.result[0].Status;
+  },
+//  devices : {},
+//  scenes  : {},
+//  switches : {},
+//  temperature :{},
+//  weather: {},
+//  utilities: {},
+};
 
-    };
 
-
-
-
-var UI = require('ui');
-
-Settings.config(
-  { url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticz.html' },
-	function(e) {console.log('opening configurable');},
-	function(e) {console.log('closed configurable');if (e.failed) {console.log(e.response);}}
+Settings.config({
+  url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticz.html' },
+  function(e) {console.log('opening configurable');},
+  function(e) {console.log('closed configurable');if (e.failed) {console.log(e.response);}}
   );
 
-    var UI = require('ui');
-   
-//    var devices = domoticz.devices();
-
-//for(var i=0; i<devices.result.length; i++) {
-//        main.item(0, i, { title: devices.result[i].Name});
-//        console.log(devices.result[i].Name);
-//}
-
-
 var menu = new UI.Menu({
-  sections: [{
-    title: 'Scenes',
+  sections: [{title: 'Scenes',},
+             {title: 'Switches', },
+             {title: 'Utilities',},
+             {title: 'Temperature', },
+             {title: 'Weather',},]});
 
-},
-
-{
-    title: 'Switches',
-//items
-  },
-{
-    title: 'Utilities',
-//items
-  },
-{
-    title: 'Temperature',
-//items
-  },
-{
-    title: 'Weather',
-//items
-  },
-]
-});
-
+var scenes = domoticz.getScenes();
+var switches = domoticz.getSwitches();
+var utilities = domoticz.getUtilities();
+var temperature = domoticz.getTemperature();
+var weather = domoticz.getWeather();
+// var devices = domoticz.getDevices();
 //scenes 
-var scenes = domoticz.scenes();
-for(var i=0; i<scenes.result.length; i++) {
-        menu.item(0, i, { title: scenes.result[i].Name});
-        console.log(scenes.result[i].Name);
+for(var i=0; i < scenes.result.length; i++) {
+  menu.item(0, i, { title: scenes.result[i].Name, idx : scenes.result[i].idx, type: 'Scene', status: scenes.result[i].Status });
 }
 //switches
-var switches = domoticz.switches();
 for(var i=0; i<switches.result.length; i++) {
-        menu.item(1, i, { title: switches.result[i].Name});
-        console.log(switches.result[i].Name);
+  menu.item(1, i, { title: switches.result[i].Name, idx :switches.result[i].idx, type: 'Switch'});
 }
-
 //utilities
-var utilities = domoticz.utilities();
 for(var i=0; i<utilities.result.length; i++) {
-        menu.item(2, i, { title: utilities.result[i].Name});
-        console.log(utilities.result[i].Name);
+  menu.item(2, i, { title: utilities.result[i].Name, idx :utilities.result[i].idx, type: 'Utility'});
 }
 
 //Temperature
-var temperature = domoticz.temperature();
 for(var i=0; i<temperature.result.length; i++) {
-        menu.item(3, i, { title: temperature.result[i].Name});
-        console.log(temperature.result[i].Name);
+  menu.item(3, i, { title: temperature.result[i].Name, idx :temperature.result[i].idx, type: 'Temperature'});
 }
 
 //weather
-var weather = domoticz.weather();
 for(var i=0; i<weather.result.length; i++) {
-        menu.item(4, i, { title: weather.result[i].Name});
-        console.log(weather.result[i].Name);
+  menu.item(4, i, { title: weather.result[i].Name, idx :weather.result[i].idx, type: 'Weather'});
 }
 
+menu.on('select', function(e) {
+var device = domoticz.getDevice(e.item.idx);
+var idx = e.item.idx;
 
+var card = new UI.Card({
+  scrollable: true,
+  title: device.result[0].Name,
+  body: device.result[0].Status
+});
 
+card.on('click', function(e) {
+  card.body=domoticz.toggleDevice(idx);
+});
 
-    menu.show();
+card.show();
+});
 
-
-
-
-
-
-var devices = domoticz.devices();
-	console.log("devices: " + JSON.stringify(devices));
-
-
-console.log('Domoticz status on app: ' + devices.status);
-
-
-
-
+menu.show();
