@@ -116,11 +116,11 @@ var Base64 = {
 
 var domoticz = {
 	_data : {},
-    devices : function () {
+  _getData : function (path) {
 
                   ajax(
                   {
-                  url: Settings.option('url') + '/json.htm?type=devices&filter=light&used=true&order=Name',
+                  url: Settings.option('url') + path,
                   type: 'json',
                   async: false,
                   headers:{
@@ -136,7 +136,10 @@ var domoticz = {
                       }
                   );
                   return domoticz._data;
-                  }
+                  },
+	devices : function () {
+		return this._getData('/json.htm?type=devices&used=true&order=Name');
+	},
     };
 
 
@@ -156,7 +159,7 @@ Settings.config(
 
 for(var i=0; i<devices.result.length; i++) {
         main.item(0, i, { title: devices.result[i].Name});
-        console.log(devices.result[i].Name + "   ТЕСТ");
+        console.log(devices.result[i].Name);
 }
 
 

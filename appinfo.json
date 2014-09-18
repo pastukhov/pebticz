@@ -29,9 +29,9 @@
                 "type": "font"
             },
             {
-                "file": "images/domoticz.png",
+                "file": "images/domoticzbw.png",
                 "menuIcon": true,
-                "name": "IMAGES_DOMOTICZ_PNG",
+                "name": "IMAGES_DOMOTICZBW_PNG",
                 "type": "png"
             }
         ]
