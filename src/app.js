@@ -116,7 +116,7 @@ var Base64 = {
 
 var domoticz = {
 	_data : {},
-  _getData : function (path) {
+	_request : function (path) {
 
                   ajax(
                   {
@@ -138,8 +138,42 @@ var domoticz = {
                   return domoticz._data;
                   },
 	devices : function () {
-		return this._getData('/json.htm?type=devices&used=true&order=Name');
+		return this._request('/json.htm?type=devices&used=true&order=Name');
 	},
+	scenes : function () {
+		return this._request('/json.htm?type=scenes');
+	},
+	switches : function () {
+		return this._request('/json.htm?type=devices&used=true&order=Name&filter=light');
+	},
+	utilities : function () {
+		return this._request('/json.htm?type=devices&used=true&order=Name&filter=utility');
+	},
+	temperature : function () {
+		return this._request('/json.htm?type=devices&used=true&order=Name&filter=temp');
+	},
+	weather : function () {
+		return this._request('/json.htm?type=devices&used=true&order=Name&filter=weather');
+	},
+	on : function (idx) {
+		return this._request('/json.htm?type=command&param=switchlight&idx=&switchcmd=On&level=0');
+	},
+	off : function (idx) {
+		return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Off&level=0');
+	},
+	setlevel : function (idx,level) {
+		return this._request('/json.htm?type=command&param=switchlight&idx='+ idx +'&switchcmd=Set%20Level&level=' + level);
+	},
+	sceneOn : function (idx) {
+		return this._request('/json.htm?type=command&param=switchscene&idx=&switchcmd=On');
+	},
+	sceneOff : function (idx) {
+		return this._request('/json.htm?type=command&param=switchscene&idx=&switchcmd=Off');
+	},
+	device : function (idx) {
+		return this._request('/json.htm?type=devices&rid=idx');
+	},
+
     };
 
 
@@ -154,18 +188,78 @@ Settings.config(
   );
 
     var UI = require('ui');
-    var main = new UI.Menu();
-    var devices = domoticz.devices();
+   
+//    var devices = domoticz.devices();
 
-for(var i=0; i<devices.result.length; i++) {
-        main.item(0, i, { title: devices.result[i].Name});
-        console.log(devices.result[i].Name);
+//for(var i=0; i<devices.result.length; i++) {
+//        main.item(0, i, { title: devices.result[i].Name});
+//        console.log(devices.result[i].Name);
+//}
+
+
+var menu = new UI.Menu({
+  sections: [{
+    title: 'Scenes',
+
+},
+
+{
+    title: 'Switches',
+//items
+  },
+{
+    title: 'Utilities',
+//items
+  },
+{
+    title: 'Temperature',
+//items
+  },
+{
+    title: 'Weather',
+//items
+  },
+]
+});
+
+//scenes 
+var scenes = domoticz.scenes();
+for(var i=0; i<scenes.result.length; i++) {
+        menu.item(0, i, { title: scenes.result[i].Name});
+        console.log(scenes.result[i].Name);
+}
+//switches
+var switches = domoticz.switches();
+for(var i=0; i<switches.result.length; i++) {
+        menu.item(1, i, { title: switches.result[i].Name});
+        console.log(switches.result[i].Name);
+}
+
+//utilities
+var utilities = domoticz.utilities();
+for(var i=0; i<utilities.result.length; i++) {
+        menu.item(2, i, { title: utilities.result[i].Name});
+        console.log(utilities.result[i].Name);
+}
+
+//Temperature
+var temperature = domoticz.temperature();
+for(var i=0; i<temperature.result.length; i++) {
+        menu.item(3, i, { title: temperature.result[i].Name});
+        console.log(temperature.result[i].Name);
+}
+
+//weather
+var weather = domoticz.weather();
+for(var i=0; i<weather.result.length; i++) {
+        menu.item(4, i, { title: weather.result[i].Name});
+        console.log(weather.result[i].Name);
 }
 
 
 
 
-    main.show();
+    menu.show();
 
 
 
