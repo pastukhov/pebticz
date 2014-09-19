@@ -172,17 +172,11 @@ var domoticz = {
   },
   toggleDevice : function (idx){
     var device = this.getDevice(idx);
-    if(device.result[0].Status == "On"){this.Off(idx);}
-    else if(device.result[0].Status == "Off"){this.On(idx);}
+    if(device.result[0].Status == "Off"){this.On(idx);}
+    else {this.Off(idx);}
     device = this.getDevice(idx);
     return device.result[0].Status;
   },
-//  devices : {},
-//  scenes  : {},
-//  switches : {},
-//  temperature :{},
-//  weather: {},
-//  utilities: {},
 };
 
 
@@ -239,7 +233,7 @@ var card = new UI.Card({
 });
 
 card.on('click', function(e) {
-  card.body=domoticz.toggleDevice(idx);
+  card.body(domoticz.toggleDevice(idx));
 });
 
 card.show();
