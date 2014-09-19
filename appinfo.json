@@ -29,6 +29,11 @@
                 "type": "font"
             },
             {
+                "file": "images/domoticzbw144x144.png",
+                "name": "IMAGES_DOMOTICZBW144X144_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/domoticzbw.png",
                 "menuIcon": true,
                 "name": "IMAGES_DOMOTICZBW_PNG",

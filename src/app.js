@@ -1,6 +1,8 @@
 var Settings = require('settings');
 var ajax = require('ajax');
 var UI = require('ui');
+var splashScreen = new UI.Card({ banner: 'images/domoticzbw144x144.png',fullscreen: true });
+splashScreen.show();
 
 
 var Base64 = {
@@ -182,6 +184,7 @@ var domoticz = {
 
 Settings.config({
   url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticz.html' },
+//  url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticzdeb.html' },
   function(e) {console.log('opening configurable');},
   function(e) {console.log('closed configurable');if (e.failed) {console.log(e.response);}}
   );
@@ -192,7 +195,14 @@ var menu = new UI.Menu({
              {title: 'Utilities',},
              {title: 'Temperature', },
              {title: 'Weather',},]});
-
+/*setTimeout(function() {
+  // Display the mainScreen
+  menu.show();
+  // Hide the splashScreen to avoid showing it when the user press Back.
+  splashScreen.hide();
+}, 400);
+*/
+             
 var scenes = domoticz.getScenes();
 var switches = domoticz.getSwitches();
 var utilities = domoticz.getUtilities();
@@ -239,4 +249,5 @@ card.on('click', function(e) {
 card.show();
 });
 
+splashScreen.hide();
 menu.show();
