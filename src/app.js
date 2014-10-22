@@ -135,7 +135,7 @@ var domoticz = {
                       }
                   );
                   return domoticz._data;
-                  },
+  },
   getDevices : function () {
     return this._request('/json.htm?type=devices&used=true&order=Name');
     },
@@ -183,11 +183,11 @@ var domoticz = {
 
 
 Settings.config({
-  url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticz.html' },
+  url: 'https://s3-eu-west-1.amazonaws.com/naygru/config.html?settings=' + encodeURIComponent(JSON.stringify(Settings.option())) },
 //  url: 'https://s3-eu-west-1.amazonaws.com/naygru/domoticzdeb.html' },
   function(e) {console.log('opening configurable');},
   function(e) {console.log('closed configurable');if (e.failed) {console.log(e.response);}}
-  );
+               );
 
 var menu = new UI.Menu({
   sections: [{title: 'Scenes',},
